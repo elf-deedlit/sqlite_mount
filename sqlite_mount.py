@@ -4,7 +4,6 @@ import argparse
 import errno
 import fuse
 import functools
-#import json
 import os
 import sys
 import sqlite3
@@ -98,8 +97,6 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
             t = '\n'.join(rslt)
             t += '\n'
             return t.encode('utf-8')
-            #rslt = json.dumps(tuple(v), sort_keys = True, indent = 2)
-            #return rslt.encode('utf-8')
 
     def getattr(self, path, fh = None):
         # パス区切り文字の数でテーブル名か中身か判断する
