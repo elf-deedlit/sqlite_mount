@@ -4,6 +4,7 @@ import argparse
 import errno
 import fuse
 import functools
+#import json
 import os
 import sys
 import sqlite3
@@ -62,7 +63,7 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
         else:
             name = path[1:]
             if name not in self.table_info:
-                return fuse.FuseOSError(errno.ENOENT)
+                raise fuse.FuseOSError(errno.ENOENT)
             pkname = self.table_info[name]
             with sqlite3.connect(self.filename) as conn:
                 cur = conn.cursor()
@@ -97,6 +98,8 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
             t = '\n'.join(rslt)
             t += '\n'
             return t.encode('utf-8')
+            #rslt = json.dumps(tuple(v), sort_keys = True, indent = 2)
+            #return rslt.encode('utf-8')
 
     def getattr(self, path, fh = None):
         # パス区切り文字の数でテーブル名か中身か判断する
@@ -110,7 +113,7 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
         else:
             rslt = self._get_row_info(path)
             if rslt is None:
-                return fuse.FuseOSError(errno.ENOENT)
+                raise fuse.FuseOSError(errno.ENOENT)
             t = dict((key, getattr(self.stat, key)) for key in ('st_atime',
                     'st_gid', 'st_mtime', 'st_uid', 'st_ctime'))
             t['st_nlink'] = 1
@@ -122,7 +125,7 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
         # 中身表示
         rslt = self._get_row_info(path)
         if rslt is None:
-            return fuse.FuseOSError(errno.ENOENT)
+            raise fuse.FuseOSError(errno.ENOENT)
         return rslt[offset:offset + size]
 
 def option_parse():
