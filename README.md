@@ -2,7 +2,7 @@
 sqliteをmountする
 
 ## 使い方
-$~ sqlite_mount.py <mount_point> <mount_file>
+$ sqlite_mount.py <mount_point> <mount_file>
 
 ### Python3.x
 $ pip install fusepy
@@ -11,7 +11,7 @@ $ pip install fusepy
 $ pip install fusepy backports.functools_lru_cache
 
 ### Python2.6
-$ yum install fuse-libs
+$ yum install fuse-libs  
 $ pip install argparse fusepy backports.functools_lru_cache
 
 ## 機能
