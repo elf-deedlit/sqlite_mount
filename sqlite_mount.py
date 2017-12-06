@@ -3,12 +3,17 @@
 import argparse
 import errno
 import fuse
-import functools
 import os
 import sys
 import sqlite3
 import stat
 import time
+
+try:
+    from functools import lru_cache
+except ImportError:
+    # Python2 だと backports.functools_lru_cache がいる
+    from backports.functools_lru_cache import lru_cache
 
 #
 # sqlite3 のファイルを fuse でマウントしてみる
@@ -72,7 +77,7 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
 
         return rslt
 
-    @functools.lru_cache(maxsize = 256)
+    @lru_cache(maxsize = 256)
     def _get_row_info(self, path):
         ss = path.split('/')
         # /table/pk -> ['',table,pk]
@@ -93,7 +98,7 @@ class DBMount(fuse.LoggingMixIn, fuse.Operations):
             rslt = []
             for k in v.keys():
                 vv = v[k]
-                rslt.append('{0}={1}'.format(k, vv))
+                rslt.append(u'{0}={1}'.format(k, vv))
             t = '\n'.join(rslt)
             t += '\n'
             return t.encode('utf-8')
